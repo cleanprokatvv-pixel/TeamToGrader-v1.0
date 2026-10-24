@@ -80,3 +80,252 @@
                     <p style="font-size: 9px; color: #9ba1a6; margin: 2px 0 0; font-weight: 700; letter-spacing: 1px;">АПГРЕЙДЕР TF2</p>
                 </div>
             </div>
+
+            <!-- TABS -->
+            <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 12px; border: 1px solid #272b36;">
+                <button type="button" onclick="switchTab('upgrader')" id="tab-btn-upgrader" class="tab-btn active">⚡ Апгрейд</button>
+                <button type="button" onclick="switchTab('cases')" id="tab-btn-cases" class="tab-btn">🎁 Кейси</button>
+                <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn">🛒 Магазин</button>
+                <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn">🎒 Інвентар</button>
+                <button type="button" onclick="switchTab('profile')" id="tab-btn-profile" class="tab-btn">👤 Профіль</button>
+            </div>
+
+            <!-- BALANCE & ADMIN -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 12px; border: 1px solid #272b36; display: flex; align-items: center; gap: 15px;">
+                    <div>
+                        <span style="font-size: 9px; color: #9ba1a6; display: block; font-weight: 700;">БАЛАНС</span>
+                        <span id="balCoins" class="cyber-font" style="font-size: 24px; color: #f3ba2f;">100 ТК</span>
+                    </div>
+                    <button type="button" onclick="requestAdmin()" style="width: 36px; height: 36px; background: #272b36; border: none; border-radius: 10px; color: #9ba1a6; display: flex; align-items: center; justify-content: center;" title="Адмін-панель">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </button>
+                </div>
+                <div id="profileHeaderContainer"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- LIVE DROPS TICKER -->
+    <div style="background: #15181f; border-bottom: 1px solid #272b36; overflow: hidden; white-space: nowrap; padding: 6px 0; font-size: 11px;">
+        <div id="tickerTrack" style="display: inline-block;"></div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main style="max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px;">
+
+        <!-- TAB 1: UPGRADER -->
+        <div id="section-upgrader" style="display: grid; grid-template-columns: 280px 1fr 280px; gap: 20px; align-items: start;">
+            <!-- Left: Inventory -->
+            <div class="cyber-panel" style="height: 580px; display: flex; flex-direction: column;">
+                <h3 style="font-size: 12px; color: #9ba1a6; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #272b36; padding-bottom: 8px;">
+                    <i class="fa-solid fa-warehouse text-amber-400"></i> Ваш інвентар
+                </h3>
+                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 10px; border: 1px solid #272b36;">
+                    <span style="font-size: 11px; color: #9ba1a6; font-weight: 700;">Ставка (ТК):</span>
+                    <input id="directRef" type="number" min="0" value="0" oninput="calcOdds()" style="width: 80px; background: #121214; border: 1px solid #272b36; text-align: right; padding: 4px 8px; border-radius: 8px; color: #f3ba2f; font-weight: 700;">
+                </div>
+                <div id="invGrid" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; align-content: start; padding-right: 4px;"></div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #272b36; text-align: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;">
+                    <span style="font-size: 10px; color: #9ba1a6; font-weight: 700; display: block;">СУМА СТАВКИ</span>
+                    <div id="totalBet" class="cyber-font" style="font-size: 28px; color: #f3ba2f;">0 ТК</div>
+                </div>
+            </div>
+
+            <!-- Center: Wheel -->
+            <div class="cyber-panel" style="height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative;">
+                <div style="text-align: center; width: 100%;">
+                    <span id="targetBadge" style="font-size: 10px; background: rgba(0,0,0,0.5); color: #9ba1a6; padding: 4px 12px; border-radius: 20px; border: 1px solid #272b36; text-transform: uppercase; font-weight: 700;">Оберіть ціль справа</span>
+                    <h2 id="targetName" class="cyber-font" style="font-size: 36px; color: #fff; margin: 8px 0 0;">---</h2>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center; margin: auto;">
+                    <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="wheelCanvas" width="260" height="260" style="border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></canvas>
+                        <div style="position: absolute; top: -10px; color: #f3ba2f; font-size: 24px;"><i class="fa-solid fa-caret-down"></i></div>
+                    </div>
+                    <div style="margin-top: 15px; background: rgba(0,0,0,0.6); padding: 6px 20px; border-radius: 20px; border: 1px solid #272b36; text-align: center;">
+                        <span style="font-size: 9px; color: #9ba1a6; text-transform: uppercase; font-weight: 700; display: block;">Шанс виграшу</span>
+                        <span id="chanceText" class="cyber-font" style="font-size: 38px; color: #f3ba2f; line-height: 1;">0.00%</span>
+                    </div>
+                </div>
+
+                <button type="button" id="upgradeBtn" onclick="startUpgrade()" disabled class="cyber-btn" style="font-size: 26px; padding: 16px;">ПОКРАЩИТИ</button>
+            </div>
+
+            <!-- Right: Catalog -->
+            <div class="cyber-panel" style="height: 580px; display: flex; flex-direction: column;">
+                <h3 style="font-size: 12px; color: #9ba1a6; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #272b36; padding-bottom: 8px;">
+                    <i class="fa-solid fa-crosshairs text-amber-400"></i> Цілі апгрейду
+                </h3>
+                <div id="catalogGrid" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: CASES -->
+        <div id="section-cases" class="hidden" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div class="cyber-panel" style="text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 380px;">
+                <div style="font-size: 64px; color: #9ba1a6; margin: auto;"><i class="fa-solid fa-box-archive"></i></div>
+                <div>
+                    <h3 class="cyber-font" style="font-size: 28px; color: #fff; margin: 0;">Бомженятко</h3>
+                    <p style="font-size: 11px; color: #9ba1a6; margin: 5px 0 15px;">Дешевий старт для новачків.</p>
+                </div>
+                <button type="button" onclick="openCase('bomzh')" class="cyber-btn">Відкрити (10 ТК)</button>
+            </div>
+
+            <div class="cyber-panel" style="text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 380px; border-color: rgba(231,76,60,0.5);">
+                <div style="font-size: 64px; color: #e74c3c; margin: auto;"><i class="fa-solid fa-house-medical"></i></div>
+                <div>
+                    <h3 class="cyber-font" style="font-size: 28px; color: #e74c3c; margin: 0;">Медік Case 🚑</h3>
+                    <p style="font-size: 11px; color: #9ba1a6; margin: 5px 0 15px;">Медичне спорядження та скіни.</p>
+                </div>
+                <button type="button" onclick="openCase('medic')" class="cyber-btn" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff;">Відкрити (35 ТК)</button>
+            </div>
+
+            <div class="cyber-panel" style="text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 380px; border-color: rgba(255,105,180,0.5);">
+                <div style="font-size: 64px; color: #ff69b4; margin: auto;"><i class="fa-solid fa-cat"></i></div>
+                <div>
+                    <h3 class="cyber-font" style="font-size: 28px; color: #ff69b4; margin: 0;">Няшний Case ✨</h3>
+                    <p style="font-size: 11px; color: #9ba1a6; margin: 5px 0 15px;">Кавайні шапки та рожеві скіни.</p>
+                </div>
+                <button type="button" onclick="openCase('nyah')" class="cyber-btn" style="background: linear-gradient(135deg, #ff69b4, #9b59b6); color: #fff;">Відкрити (150 ТК)</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: SHOP -->
+        <div id="section-shop" class="hidden cyber-panel">
+            <h2 class="cyber-font" style="font-size: 32px; color: #f3ba2f; margin-top: 0;">Магазин предметів</h2>
+            <div id="shopGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;"></div>
+        </div>
+
+        <!-- TAB 4: INVENTORY -->
+        <div id="section-inventory" class="hidden cyber-panel">
+            <h2 class="cyber-font" style="font-size: 32px; color: #f3ba2f; margin-top: 0;">Колекція предметів</h2>
+            <div id="fullInvGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;"></div>
+        </div>
+
+        <!-- TAB 5: PROFILE -->
+        <div id="section-profile" class="hidden cyber-panel" style="max-width: 600px; margin: 0 auto;">
+            <div id="profileContentArea"></div>
+        </div>
+
+    </main>
+
+    <!-- CASE MODAL -->
+    <div id="caseModal" class="modal hidden">
+        <div class="cyber-panel" style="max-width: 500px; width: 100%; text-align: center;">
+            <h3 class="cyber-font" style="font-size: 36px; color: #f3ba2f; margin: 0;">ВІДКРИТТЯ КЕЙСУ</h3>
+            <div class="case-roulette-container">
+                <div class="case-marker"></div>
+                <div id="caseRouletteTrack" class="case-roulette-track"></div>
+            </div>
+            <div id="caseWonResult" class="hidden" style="margin-bottom: 20px;">
+                <span style="font-size: 11px; color: #9ba1a6; font-weight: 700; display: block; margin-bottom: 5px;">ВИ ВИГРАЛИ:</span>
+                <div id="caseWonItemBox" style="display: flex; align-items: center; justify-content: center; gap: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px;"></div>
+            </div>
+            <button type="button" id="caseCloseBtn" onclick="closeCaseModal()" disabled class="cyber-btn">Отримати предмет</button>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdrawModal" class="modal hidden">
+        <div class="cyber-panel" style="max-width: 400px; width: 100%; position: relative;">
+            <button type="button" onclick="toggleWithdrawModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #9ba1a6; font-size: 18px;"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="cyber-font" style="font-size: 28px; color: #f3ba2f; margin: 0 0 5px;">Вивід предмета</h3>
+            <p style="font-size: 11px; color: #9ba1a6; margin: 0 0 15px;">Вкажіть ваше Steam Trade URL для трейду від бота.</p>
+            <div id="withdrawItemPreview" style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 12px; margin-bottom: 15px;"></div>
+            <label style="font-size: 11px; color: #9ba1a6; font-weight: 700; display: block; margin-bottom: 5px;">Ваше Trade URL:</label>
+            <input id="tradeUrlInput" type="text" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=..." style="width: 100%; background: #121214; border: 1px solid #272b36; padding: 10px; border-radius: 10px; color: #fff; font-size: 11px; margin-bottom: 15px;">
+            <button type="button" onclick="confirmWithdrawRequest()" class="cyber-btn">Надіслати запит</button>
+        </div>
+    </div>
+
+    <!-- ADMIN MODAL (PIN: 11111) -->
+    <div id="adminModal" class="modal hidden">
+        <div class="cyber-panel" style="max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative;">
+            <button type="button" onclick="toggleAdmin()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #9ba1a6; font-size: 18px;"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="cyber-font" style="font-size: 32px; color: #f3ba2f; margin: 0 0 15px;">Адмін-Панель</h3>
+            
+            <div style="display: flex; gap: 15px; border-bottom: 1px solid #272b36; margin-bottom: 15px; padding-bottom: 10px;">
+                <button type="button" onclick="switchAdminTab('withdraws')" id="admin-tab-withdraws" style="background:none; border:none; color:#f3ba2f; font-weight:700; font-size:12px; text-transform:uppercase;">📦 Заявки на вивід</button>
+                <button type="button" onclick="switchAdminTab('users')" id="admin-tab-users" style="background:none; border:none; color:#9ba1a6; font-weight:700; font-size:12px; text-transform:uppercase;">👥 Баланс гравців</button>
+            </div>
+
+            <div id="admin-sec-withdraws">
+                <div id="adminWithdrawsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+
+            <div id="admin-sec-users" class="hidden">
+                <label style="font-size: 11px; color: #9ba1a6; font-weight: 700; display: block; margin-bottom: 5px;">Нікнейм гравця:</label>
+                <input id="adminTargetUser" type="text" value="Я (Мій баланс)" style="width: 100%; background: #121214; border: 1px solid #272b36; padding: 10px; border-radius: 10px; color: #fff; font-weight: 700; margin-bottom: 12px;">
+                <label style="font-size: 11px; color: #9ba1a6; font-weight: 700; display: block; margin-bottom: 5px;">Сума ТК:</label>
+                <input id="adminInput" type="number" value="1000" style="width: 100%; background: #121214; border: 1px solid #272b36; padding: 10px; border-radius: 10px; color: #f3ba2f; font-weight: 700; margin-bottom: 12px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px;">
+                    <button type="button" onclick="setAdminAmount(100)" style="background: #121214; border: 1px solid #272b36; color: #f3ba2f; padding: 8px; border-radius: 8px; font-weight: 700;">+100 ТК</button>
+                    <button type="button" onclick="setAdminAmount(1000)" style="background: #121214; border: 1px solid #272b36; color: #f3ba2f; padding: 8px; border-radius: 8px; font-weight: 700;">+1000 ТК</button>
+                    <button type="button" onclick="setAdminAmount(5000)" style="background: #121214; border: 1px solid #272b36; color: #f3ba2f; padding: 8px; border-radius: 8px; font-weight: 700;">+5000 ТК</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="addAdminRef()" class="cyber-btn">Нарахувати</button>
+                    <button type="button" onclick="resetUserBalance()" style="background: #5a1a1a; border: 1px solid #852626; color: #ff9999; padding: 12px; border-radius: 12px; font-weight: 700; text-transform: uppercase;">Скинути</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        let balance = parseFloat(localStorage.getItem('tf_coins')) || 100.0;
+        let selectedInv = JSON.parse(localStorage.getItem('tf_sel')) || [];
+        let targetItem = null;
+        let isSpinning = false;
+        let steamUser = JSON.parse(localStorage.getItem('tf_steam_user')) || null;
+        let pendingWithdrawIndex = null;
+
+        let withdrawRequests = JSON.parse(localStorage.getItem('tf_withdraw_requests')) || [];
+        let stats = JSON.parse(localStorage.getItem('tf_stats')) || { casesOpened: 0, upgradesAttempted: 0, upgradesWon: 0, totalWonValue: 0 };
+        let liveDrops = JSON.parse(localStorage.getItem('tf_livedrops')) || [{ player: 'SniperGod99', item: 'Mann Co. Cap', price: 15 }];
+
+        const itemsDB = [
+            { id: '1', name: 'Mercenary Badge', price: 5, quality: 'unique', icon: 'fa-shield-halved', color: '#ffd700' },
+            { id: '2', name: 'Scout Bat', price: 8, quality: 'unique', icon: 'fa-baseball-bat-ball', color: '#ffd700' },
+            { id: '3', name: 'Gibus Hat', price: 12, quality: 'unique', icon: 'fa-hat-wizard', color: '#ffd700' },
+            { id: '4', name: 'Mann Co. Cap', price: 15, quality: 'unique', icon: 'fa-graduation-cap', color: '#ffd700' },
+            { id: '5', name: 'Engineer Wrench', price: 18, quality: 'unique', icon: 'fa-wrench', color: '#ffd700' },
+            { id: 'm1', name: 'Standard Syringe Gun', price: 10, quality: 'unique', icon: 'fa-syringe', color: '#ffd700' },
+            { id: 'm2', name: 'The Blutsauger', price: 25, quality: 'strange', icon: 'fa-notes-medical', color: '#cf6a32' },
+            { id: 'm3', name: 'Vintage Quick-Fix', price: 45, quality: 'vintage', icon: 'fa-kit-medical', color: '#476291' },
+            { id: 'm4', name: 'Australium Medi Gun', price: 350, quality: 'australium', icon: 'fa-laptop-medical', color: '#ffd700' },
+            { id: 'n1', name: 'Cat Ears Headband', price: 30, quality: 'unique', icon: 'fa-cat', color: '#ff69b4' },
+            { id: 'n2', name: 'Pink As Hell Paint', price: 75, quality: 'unique', icon: 'fa-paint-roller', color: '#ff69b4' },
+            { id: 'n3', name: 'Cute Suit Cosmetics', price: 120, quality: 'strange', icon: 'fa-heart', color: '#cf6a32' },
+            { id: 'n4', name: 'Kawaii Unusual Effect', price: 850, quality: 'unusual', icon: 'fa-wand-magic-sparkles', color: '#8650ac' },
+            { id: '6', name: 'Strange Shotgun', price: 35, quality: 'strange', icon: 'fa-gun', color: '#cf6a32' },
+            { id: '7', name: 'Vintage KritzKrieg', price: 90, quality: 'vintage', icon: 'fa-briefcase-medical', color: '#476291' },
+            { id: '8', name: 'Australium Wrench', price: 130, quality: 'australium', icon: 'fa-screwdriver-wrench', color: '#ffd700' },
+            { id: '9', name: 'Unusual Burning Flames Team Captain', price: 3400, quality: 'unusual', icon: 'fa-crown', color: '#8650ac' },
+            { id: '10', name: 'Australium Rocket Launcher', price: 550, quality: 'australium', icon: 'fa-rocket', color: '#ffd700' },
+            { id: '11', name: 'Team Captain Hat', price: 120, quality: 'unique', icon: 'fa-hat-cowboy', color: '#ffd700' },
+            { id: '12', name: 'Strange Minigun', price: 65, quality: 'strange', icon: 'fa-fire-flame-curved', color: '#cf6a32' },
+            { id: '13', name: 'Golden Frying Pan', price: 6000, quality: 'australium', icon: 'fa-utensils', color: '#ffd700' }
+        ];
+
+        const casesDB = {
+            bomzh: { cost: 10, items: [itemsDB[0], itemsDB[1], itemsDB[2], itemsDB[3], itemsDB[4]] },
+            medic: { cost: 35, items: [itemsDB[5], itemsDB[6], itemsDB[7], itemsDB[8], itemsDB[14] || itemsDB[5]] },
+            nyah: { cost: 150, items: [itemsDB[9], itemsDB[10], itemsDB[11], itemsDB[12]] }
+        };
+
+        let inventory = JSON.parse(localStorage.getItem('tf_inv')) || [itemsDB[0], itemsDB[1], itemsDB[2]];
+
+        function getCurrentPlayerName() { return steamUser ? steamUser.name : "Гість"; }
+
+        function addLiveDrop(itemName, itemPrice) {
+            liveDrops.unshift({ player: getCurrentPlayerName(), item: itemName, price: itemPrice });
+            if(liveDrops.length > 20) liveDrops.pop();
+            localStorage.setItem('tf_livedrops', JSON.stringify(liveDrops));
+            renderTicker();
+        }
+
+        function renderTicker() {
+            const track = document.
