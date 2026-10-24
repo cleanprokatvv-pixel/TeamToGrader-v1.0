@@ -88,6 +88,7 @@
         }
         .tab-btn.active { background: #e7b53b; color: #171311; border-color: #f9d877; font-weight: 800; }
 
+        /* Wheel Container */
         .wheel-box {
             position: relative;
             width: 260px;
@@ -97,6 +98,7 @@
             justify-content: center;
         }
 
+        /* Rotating Arrow Overlay */
         .arrow-spinner {
             position: absolute;
             top: 0;
@@ -106,7 +108,6 @@
             pointer-events: none;
             z-index: 10;
             transform-origin: center center;
-            transition: transform 0s;
         }
         .arrow-pointer {
             position: absolute;
@@ -121,6 +122,43 @@
             filter: drop-shadow(0 3px 6px rgba(0,0,0,0.8));
         }
 
+        /* Custom In-App Notification (Toast) */
+        #notification-box {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .tf-toast {
+            pointer-events: auto;
+            min-width: 260px;
+            background: #2b2522;
+            border: 2px solid #e7b53b;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            border-radius: 10px;
+            padding: 12px 18px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease forwards;
+        }
+        .tf-toast.success { border-color: #2ecc71; }
+        .tf-toast.error { border-color: #e74c3c; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
         .hidden { display: none !important; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #3e3530; border-radius: 3px; }
@@ -128,6 +166,7 @@
 </head>
 <body>
 
+    <!-- NAVBAR -->
     <header style="background: #231d1a; border-bottom: 3px solid #e7b53b; padding: 12px 24px; position: sticky; top: 0; z-index: 100;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -140,26 +179,31 @@
                 </div>
             </div>
 
+            <!-- TABS -->
             <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 10px; border: 1px solid #3e3530;">
                 <button type="button" onclick="switchTab('upgrader')" id="tab-btn-upgrader" class="tab-btn active">⚡ Апгрейд</button>
                 <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn">🛒 Магазин</button>
                 <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn">🎒 Інвентар</button>
             </div>
 
+            <!-- BALANCE -->
             <div style="background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 10px; border: 1px solid #3e3530; display: flex; align-items: center; gap: 12px;">
                 <div>
                     <span style="font-size: 9px; color: #a89f91; display: block; font-weight: 700;">БАЛАНС</span>
                     <span id="balCoins" class="tf-font" style="font-size: 26px; color: #e7b53b; line-height: 1;">100 ТК</span>
                 </div>
-                <button type="button" onclick="addFreeCoins()" style="background: #3e3530; border: none; border-radius: 6px; color: #e74c3c; width: 30px; height: 30px; font-weight: bold; cursor: pointer;">+</button>
+                <button type="button" onclick="addFreeCoins()" style="background: #3e3530; border: none; border-radius: 6px; color: #e74c3c; width: 30px; height: 30px; font-weight: bold; cursor: pointer;" title="Поповнити по 100 ТК">+</button>
             </div>
         </div>
     </header>
 
+    <!-- MAIN CONTAINER -->
     <main style="max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px;">
 
+        <!-- TAB 1: UPGRADER -->
         <div id="section-upgrader" style="display: grid; grid-template-columns: 280px 1fr 280px; gap: 20px; align-items: start;">
             
+            <!-- Left: Inventory -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
                 <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
                     <i class="fa-solid fa-boxes-stacked"></i> Ваш інвентар
@@ -175,12 +219,14 @@
                 </div>
             </div>
 
+            <!-- Center: Wheel -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative;">
                 <div style="text-align: center; width: 100%;">
                     <span id="targetBadge" style="font-size: 10px; background: rgba(0,0,0,0.5); color: #a89f91; padding: 4px 12px; border-radius: 20px; border: 1px solid #3e3530; text-transform: uppercase; font-weight: 700;">Оберіть предмет праворуч</span>
                     <h2 id="targetName" class="tf-font" style="font-size: 34px; color: #fff; margin: 8px 0 0;">---</h2>
                 </div>
 
+                <!-- Wheel Box -->
                 <div class="wheel-box">
                     <canvas id="wheelCanvas" width="260" height="260" style="border-radius: 50%; box-shadow: 0 0 25px rgba(0,0,0,0.9);"></canvas>
                     <div id="arrowSpinner" class="arrow-spinner">
@@ -196,6 +242,7 @@
                 <button type="button" id="upgradeBtn" onclick="startUpgrade()" disabled class="tf-btn">ПОКРАЩИТИ</button>
             </div>
 
+            <!-- Right: Catalog -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
                 <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
                     <i class="fa-solid fa-bullseye"></i> Цілі для апгрейду
@@ -204,17 +251,22 @@
             </div>
         </div>
 
+        <!-- TAB 2: SHOP -->
         <div id="section-shop" class="hidden tf-panel">
             <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Магазин предметів TF2</h2>
             <div id="shopGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;"></div>
         </div>
 
+        <!-- TAB 3: INVENTORY -->
         <div id="section-inventory" class="hidden tf-panel">
             <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Ваша колекція</h2>
             <div id="fullInvGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;"></div>
         </div>
 
     </main>
+
+    <!-- Custom Notification Box -->
+    <div id="notification-box"></div>
 
     <script>
         let balance = parseFloat(localStorage.getItem('tf_coins')) || 100.0;
@@ -238,6 +290,28 @@
 
         let inventory = JSON.parse(localStorage.getItem('tf_inv')) || [itemsDB[0], itemsDB[1], itemsDB[2]];
 
+        // Кастомне вбудоване сповіщення замість alert()
+        function showToast(message, type = 'info') {
+            const box = document.getElementById('notification-box');
+            const toast = document.createElement('div');
+            toast.className = `tf-toast ${type}`;
+            
+            let icon = 'fa-info-circle';
+            if(type === 'success') icon = 'fa-circle-check';
+            if(type === 'error') icon = 'fa-triangle-exclamation';
+
+            toast.innerHTML = `
+                <i class="fa-solid ${icon}" style="font-size:20px; color:${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#e7b53b'};"></i>
+                <div style="font-size:12px; font-weight:700;">${message}</div>
+            `;
+            box.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         function switchTab(tab) {
             ['upgrader', 'shop', 'inventory'].forEach(t => {
                 let sec = document.getElementById(`section-${t}`);
@@ -255,6 +329,7 @@
         function addFreeCoins() {
             balance += 100;
             updateUI();
+            showToast('Нараховано +100 ТК!', 'success');
         }
 
         function renderInv() {
@@ -319,12 +394,12 @@
 
         function buyItem(id) {
             let item = itemsDB.find(i => i.id === id);
-            if(!item || balance < item.price) { alert('Недостатньо ТК!'); return; }
+            if(!item || balance < item.price) { showToast('Недостатньо ТК на балансі!', 'error'); return; }
             balance -= item.price;
             inventory.push(item);
             updateUI();
             renderInv();
-            alert(`Придбано: ${item.name}!`);
+            showToast(`Придбано: ${item.name}!`, 'success');
         }
 
         function sellItem(index) {
@@ -336,6 +411,7 @@
             updateUI();
             renderInv();
             if(!document.getElementById('section-inventory').classList.contains('hidden')) renderFullInv();
+            showToast(`Продано ${item.name} за +${item.price} ТК!`, 'info');
         }
 
         function renderCatalog() {
@@ -384,6 +460,7 @@
             if(btn) btn.disabled = false;
         }
 
+        // ЖОВТИЙ СЕКТОР ЗАЛИШАЄТЬСЯ НЕРАХОМИМ І ТРИМАЄ СВІЙ РАЗМІР У ЗОНІ ВИГРАШУ
         function drawWheel(chance) {
             document.getElementById('chanceText').innerText = `${chance.toFixed(2)}%`;
             const canvas = document.getElementById('wheelCanvas');
@@ -391,6 +468,7 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 260, 260);
 
+            // Основне тло круга
             ctx.beginPath();
             ctx.arc(130, 130, 120, 0, Math.PI * 2);
             ctx.fillStyle = '#171311';
@@ -399,6 +477,7 @@
             ctx.strokeStyle = '#3e3530';
             ctx.stroke();
 
+            // Фіксований жовтий сектор від 12 годин (-Math.PI/2)
             if(chance > 0) {
                 let winAngle = (chance / 100) * (Math.PI * 2);
                 ctx.beginPath();
@@ -410,13 +489,14 @@
             }
         }
 
+        // Запуск прокрутки стрілки
         function startUpgrade() {
             if(isSpinning || !targetItem) return;
             let direct = parseFloat(document.getElementById('directRef').value) || 0;
             let total = direct;
             selectedInv.forEach(idx => { if(inventory[idx]) total += inventory[idx].price; });
 
-            if(direct > balance) { alert('Недостатньо ТК!'); return; }
+            if(direct > balance) { showToast('Недостатньо ТК на балансі!', 'error'); return; }
             if(direct > 0) { balance -= direct; document.getElementById('directRef').value = 0; }
 
             inventory = inventory.filter((_, idx) => !selectedInv.includes(idx));
@@ -430,6 +510,7 @@
             let chance = Math.min((total / targetItem.price) * 100, 95);
             let win = Math.random() * 100 < chance;
 
+            // Стрілка зупиняється або в жовтому секторі (win), або поза ним (lose)
             let winRad = (chance / 100) * (Math.PI * 2);
             let targetRad = win ? (Math.random() * winRad) : (winRad + Math.random() * (Math.PI * 2 - winRad));
             let totalRotation = Math.PI * 2 * 5 + targetRad;
@@ -453,9 +534,9 @@
                     isSpinning = false;
                     if(win) { 
                         inventory.push(targetItem); 
-                        alert(`🎉 УСПІХ! Ви виграли: ${targetItem.name}!`); 
+                        showToast(`🎉 УСПІХ! Ви виграли: ${targetItem.name}!`, 'success'); 
                     } else { 
-                        alert("❌ ПРОГРАШ! Спробуйте ще раз."); 
+                        showToast('❌ ПРОГРАШ! Спробуйте ще раз.', 'error'); 
                     }
                     renderInv();
                 }
