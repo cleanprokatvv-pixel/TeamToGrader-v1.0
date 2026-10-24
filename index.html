@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TeamToGrader — TF2 Upgrader</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Titantium++Bold&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body { 
-            background: #1b1715 url('https://www.transparenttextures.com/patterns/dark-leather.png'); 
+            background: #1b1715; 
             color: #f3f4f6; 
             font-family: 'Montserrat', sans-serif; 
             user-select: none; 
@@ -19,7 +19,6 @@
         
         .tf-font { font-family: 'Teko', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
         
-        /* TF2 Panel Style */
         .tf-panel { 
             background: #2b2522; 
             border: 2px solid #3e3530; 
@@ -28,7 +27,6 @@
             padding: 16px; 
         }
         
-        /* Buttons */
         .tf-btn { 
             background: linear-gradient(180deg, #e7b53b 0%, #b88314 100%); 
             color: #171311; 
@@ -40,20 +38,17 @@
             font-size: 22px;
             letter-spacing: 1px;
             text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.4); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
             transition: all 0.15s ease;
             width: 100%;
             cursor: pointer;
         }
         .tf-btn:hover:not(:disabled) { 
             background: linear-gradient(180deg, #ffd466 0%, #d4971c 100%); 
-            transform: translateY(-1px);
-            box-shadow: 0 6px 15px rgba(231, 181, 59, 0.4);
+            transform: translateY(-1px); 
         }
-        .tf-btn:active:not(:disabled) { transform: translateY(1px); }
-        .tf-btn:disabled { opacity: 0.4; cursor: not-allowed !allowed; border-color: #555; }
+        .tf-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #555; }
 
-        /* Item Cards */
         .item-card { 
             background: #1e1917; 
             border: 2px solid #3c332d; 
@@ -65,7 +60,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            position: relative;
             cursor: pointer;
         }
         .item-card:hover { border-color: #e7b53b; transform: translateY(-2px); }
@@ -75,7 +69,6 @@
             box-shadow: 0 0 12px rgba(231, 181, 59, 0.4); 
         }
 
-        /* Quality Colors */
         .q-unique { color: #ffd700; border-color: #ffd700; }
         .q-strange { color: #cf6a32; border-color: #cf6a32; }
         .q-vintage { color: #476291; border-color: #476291; }
@@ -91,12 +84,10 @@
             font-weight: 700; 
             font-size: 13px; 
             text-transform: uppercase; 
-            transition: 0.2s;
             cursor: pointer;
         }
         .tab-btn.active { background: #e7b53b; color: #171311; border-color: #f9d877; font-weight: 800; }
 
-        /* Wheel Container */
         .wheel-box {
             position: relative;
             width: 260px;
@@ -106,7 +97,6 @@
             justify-content: center;
         }
 
-        /* Rotating Arrow Overlay */
         .arrow-spinner {
             position: absolute;
             top: 0;
@@ -116,6 +106,7 @@
             pointer-events: none;
             z-index: 10;
             transform-origin: center center;
+            transition: transform 0s;
         }
         .arrow-pointer {
             position: absolute;
@@ -131,14 +122,12 @@
         }
 
         .hidden { display: none !important; }
-        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #3e3530; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <!-- HEADER / NAVBAR -->
     <header style="background: #231d1a; border-bottom: 3px solid #e7b53b; padding: 12px 24px; position: sticky; top: 0; z-index: 100;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -151,34 +140,29 @@
                 </div>
             </div>
 
-            <!-- TABS -->
             <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 10px; border: 1px solid #3e3530;">
                 <button type="button" onclick="switchTab('upgrader')" id="tab-btn-upgrader" class="tab-btn active">⚡ Апгрейд</button>
                 <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn">🛒 Магазин</button>
                 <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn">🎒 Інвентар</button>
             </div>
 
-            <!-- BALANCE -->
             <div style="background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 10px; border: 1px solid #3e3530; display: flex; align-items: center; gap: 12px;">
                 <div>
                     <span style="font-size: 9px; color: #a89f91; display: block; font-weight: 700;">БАЛАНС</span>
                     <span id="balCoins" class="tf-font" style="font-size: 26px; color: #e7b53b; line-height: 1;">100 ТК</span>
                 </div>
-                <button type="button" onclick="addFreeCoins()" style="background: #3e3530; border: none; border-radius: 6px; color: #e74c3c; width: 30px; height: 30px; font-weight: bold;" title="Поповнити по 100 ТК">+</button>
+                <button type="button" onclick="addFreeCoins()" style="background: #3e3530; border: none; border-radius: 6px; color: #e74c3c; width: 30px; height: 30px; font-weight: bold; cursor: pointer;">+</button>
             </div>
         </div>
     </header>
 
-    <!-- MAIN CONTAINER -->
     <main style="max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px;">
 
-        <!-- TAB 1: UPGRADER -->
         <div id="section-upgrader" style="display: grid; grid-template-columns: 280px 1fr 280px; gap: 20px; align-items: start;">
             
-            <!-- Left: Inventory -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
                 <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
-                    <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Ваш інвентар
+                    <i class="fa-solid fa-boxes-stacked"></i> Ваш інвентар
                 </h3>
                 <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; border: 1px solid #3e3530;">
                     <span style="font-size: 11px; color: #a89f91; font-weight: 700;">Ставка монетами:</span>
@@ -191,14 +175,12 @@
                 </div>
             </div>
 
-            <!-- Center: Wheel -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative;">
                 <div style="text-align: center; width: 100%;">
                     <span id="targetBadge" style="font-size: 10px; background: rgba(0,0,0,0.5); color: #a89f91; padding: 4px 12px; border-radius: 20px; border: 1px solid #3e3530; text-transform: uppercase; font-weight: 700;">Оберіть предмет праворуч</span>
                     <h2 id="targetName" class="tf-font" style="font-size: 34px; color: #fff; margin: 8px 0 0;">---</h2>
                 </div>
 
-                <!-- Wheel Canvas with Rotating Arrow -->
                 <div class="wheel-box">
                     <canvas id="wheelCanvas" width="260" height="260" style="border-radius: 50%; box-shadow: 0 0 25px rgba(0,0,0,0.9);"></canvas>
                     <div id="arrowSpinner" class="arrow-spinner">
@@ -214,22 +196,19 @@
                 <button type="button" id="upgradeBtn" onclick="startUpgrade()" disabled class="tf-btn">ПОКРАЩИТИ</button>
             </div>
 
-            <!-- Right: Target Catalog -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
                 <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
-                    <i class="fa-solid fa-bullseye text-amber-400"></i> Цілі для апгрейду
+                    <i class="fa-solid fa-bullseye"></i> Цілі для апгрейду
                 </h3>
                 <div id="catalogGrid" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
             </div>
         </div>
 
-        <!-- TAB 2: SHOP -->
         <div id="section-shop" class="hidden tf-panel">
             <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Магазин предметів TF2</h2>
             <div id="shopGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;"></div>
         </div>
 
-        <!-- TAB 3: INVENTORY -->
         <div id="section-inventory" class="hidden tf-panel">
             <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Ваша колекція</h2>
             <div id="fullInvGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;"></div>
@@ -237,27 +216,24 @@
 
     </main>
 
-    <!-- SCRIPT LOGIC -->
     <script>
         let balance = parseFloat(localStorage.getItem('tf_coins')) || 100.0;
         let selectedInv = [];
         let targetItem = null;
         let isSpinning = false;
-        let currentArrowAngle = 0; // кут повороту стрілки в радіанах
 
-        // База предметів TF2
         const itemsDB = [
-            { id: '1', name: 'Mercenary Badge', price: 5, quality: 'unique', qClass: 'q-unique', icon: 'fa-shield-halved', color: '#ffd700' },
-            { id: '2', name: 'Scout Bat', price: 8, quality: 'unique', qClass: 'q-unique', icon: 'fa-baseball-bat-ball', color: '#ffd700' },
-            { id: '3', name: 'Gibus Hat', price: 12, quality: 'unique', qClass: 'q-unique', icon: 'fa-hat-wizard', color: '#ffd700' },
-            { id: '4', name: 'Mann Co. Cap', price: 15, quality: 'unique', qClass: 'q-unique', icon: 'fa-graduation-cap', color: '#ffd700' },
-            { id: '5', name: 'Standard Syringe Gun', price: 20, quality: 'unique', qClass: 'q-unique', icon: 'fa-syringe', color: '#ffd700' },
-            { id: '6', name: 'Strange Shotgun', price: 40, quality: 'strange', qClass: 'q-strange', icon: 'fa-gun', color: '#cf6a32' },
-            { id: '7', name: 'Vintage Quick-Fix', price: 65, quality: 'vintage', qClass: 'q-vintage', icon: 'fa-kit-medical', color: '#476291' },
-            { id: '8', name: 'Australium Wrench', price: 140, quality: 'australium', qClass: 'q-australium', icon: 'fa-wrench', color: '#f3ba2f' },
-            { id: '9', name: 'Australium Rocket Launcher', price: 550, quality: 'australium', qClass: 'q-australium', icon: 'fa-rocket', color: '#f3ba2f' },
-            { id: '10', name: 'Unusual Team Captain', price: 1200, quality: 'unusual', qClass: 'q-unusual', icon: 'fa-crown', color: '#8650ac' },
-            { id: '11', name: 'Golden Frying Pan', price: 5000, quality: 'australium', qClass: 'q-australium', icon: 'fa-utensils', color: '#f3ba2f' }
+            { id: '1', name: 'Mercenary Badge', price: 5, quality: 'unique', qClass: 'q-unique', icon: 'fa-shield-halved' },
+            { id: '2', name: 'Scout Bat', price: 8, quality: 'unique', qClass: 'q-unique', icon: 'fa-baseball-bat-ball' },
+            { id: '3', name: 'Gibus Hat', price: 12, quality: 'unique', qClass: 'q-unique', icon: 'fa-hat-wizard' },
+            { id: '4', name: 'Mann Co. Cap', price: 15, quality: 'unique', qClass: 'q-unique', icon: 'fa-graduation-cap' },
+            { id: '5', name: 'Standard Syringe Gun', price: 20, quality: 'unique', qClass: 'q-unique', icon: 'fa-syringe' },
+            { id: '6', name: 'Strange Shotgun', price: 40, quality: 'strange', qClass: 'q-strange', icon: 'fa-gun' },
+            { id: '7', name: 'Vintage Quick-Fix', price: 65, quality: 'vintage', qClass: 'q-vintage', icon: 'fa-kit-medical' },
+            { id: '8', name: 'Australium Wrench', price: 140, quality: 'australium', qClass: 'q-australium', icon: 'fa-wrench' },
+            { id: '9', name: 'Australium Rocket Launcher', price: 550, quality: 'australium', qClass: 'q-australium', icon: 'fa-rocket' },
+            { id: '10', name: 'Unusual Team Captain', price: 1200, quality: 'unusual', qClass: 'q-unusual', icon: 'fa-crown' },
+            { id: '11', name: 'Golden Frying Pan', price: 5000, quality: 'australium', qClass: 'q-australium', icon: 'fa-utensils' }
         ];
 
         let inventory = JSON.parse(localStorage.getItem('tf_inv')) || [itemsDB[0], itemsDB[1], itemsDB[2]];
@@ -408,7 +384,6 @@
             if(btn) btn.disabled = false;
         }
 
-        // Малювання НЕРУХОМОГО круга (жовтий сектор — зона виграшу від 0° нагорі)
         function drawWheel(chance) {
             document.getElementById('chanceText').innerText = `${chance.toFixed(2)}%`;
             const canvas = document.getElementById('wheelCanvas');
@@ -416,7 +391,6 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 260, 260);
 
-            // Фони секторів
             ctx.beginPath();
             ctx.arc(130, 130, 120, 0, Math.PI * 2);
             ctx.fillStyle = '#171311';
@@ -429,7 +403,6 @@
                 let winAngle = (chance / 100) * (Math.PI * 2);
                 ctx.beginPath();
                 ctx.moveTo(130, 130);
-                // Зона виграшу від 12 годин (-Math.PI/2) за годинниковою стрілкою
                 ctx.arc(130, 130, 118, -Math.PI / 2, -Math.PI / 2 + winAngle);
                 ctx.lineTo(130, 130);
                 ctx.fillStyle = '#e7b53b';
@@ -437,7 +410,6 @@
             }
         }
 
-        // Запуск обертання СТРІЛКИ
         function startUpgrade() {
             if(isSpinning || !targetItem) return;
             let direct = parseFloat(document.getElementById('directRef').value) || 0;
@@ -447,7 +419,6 @@
             if(direct > balance) { alert('Недостатньо ТК!'); return; }
             if(direct > 0) { balance -= direct; document.getElementById('directRef').value = 0; }
 
-            // Забираємо вибрані предмети
             inventory = inventory.filter((_, idx) => !selectedInv.includes(idx));
             selectedInv = [];
             updateUI(); 
@@ -459,27 +430,20 @@
             let chance = Math.min((total / targetItem.price) * 100, 95);
             let win = Math.random() * 100 < chance;
 
-            // Обчислюємо кінцевий кут стрілки (у радіанах)
-            // Зона виграшу охоплює від 0 rad до winRad (де 0 — вершина круга).
             let winRad = (chance / 100) * (Math.PI * 2);
             let targetRad = win ? (Math.random() * winRad) : (winRad + Math.random() * (Math.PI * 2 - winRad));
-            
-            // Додаємо 5 повних обертів (10 * Math.PI)
             let totalRotation = Math.PI * 2 * 5 + targetRad;
 
             let start = null;
-            let duration = 3800; // тривалість у мс
+            let duration = 3800;
             const spinnerElem = document.getElementById('arrowSpinner');
 
             function animateArrow(timestamp) {
                 if(!start) start = timestamp;
                 let progress = Math.min((timestamp - start) / duration, 1);
                 
-                // Плавна анімація сповільнення (cubic ease-out)
                 let ease = 1 - Math.pow(1 - progress, 3);
                 let currentRad = totalRotation * ease;
-
-                // Оверлей стрілки повертається через CSS transform
                 let currentDeg = (currentRad * 180) / Math.PI;
                 spinnerElem.style.transform = `rotate(${currentDeg}deg)`;
 
