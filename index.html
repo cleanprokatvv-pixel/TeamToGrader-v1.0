@@ -88,6 +88,7 @@
         }
         .tab-btn.active { background: #e7b53b; color: #171311; border-color: #f9d877; font-weight: 800; }
 
+        /* Wheel Container */
         .wheel-box {
             position: relative;
             width: 260px;
@@ -97,6 +98,7 @@
             justify-content: center;
         }
 
+        /* Rotating Arrow Overlay */
         .arrow-spinner {
             position: absolute;
             top: 0;
@@ -163,6 +165,7 @@
 </head>
 <body>
 
+    <!-- NAVBAR -->
     <header style="background: #231d1a; border-bottom: 3px solid #e7b53b; padding: 12px 24px; position: sticky; top: 0; z-index: 100;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -175,12 +178,14 @@
                 </div>
             </div>
 
+            <!-- TABS -->
             <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 10px; border: 1px solid #3e3530;">
                 <button type="button" onclick="switchTab('upgrader')" id="tab-btn-upgrader" class="tab-btn active">⚡ Апгрейд</button>
                 <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn">🛒 Магазин</button>
                 <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn">🎒 Інвентар</button>
             </div>
 
+            <!-- BALANCE -->
             <div style="background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 10px; border: 1px solid #3e3530; display: flex; align-items: center; gap: 12px;">
                 <div>
                     <span style="font-size: 9px; color: #a89f91; display: block; font-weight: 700;">БАЛАНС</span>
@@ -191,10 +196,13 @@
         </div>
     </header>
 
+    <!-- MAIN CONTAINER -->
     <main style="max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px;">
 
+        <!-- TAB 1: UPGRADER -->
         <div id="section-upgrader" style="display: grid; grid-template-columns: 280px 1fr 280px; gap: 20px; align-items: start;">
             
+            <!-- Left: Inventory -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
                 <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
                     <i class="fa-solid fa-boxes-stacked"></i> Ваш інвентар
@@ -210,12 +218,14 @@
                 </div>
             </div>
 
+            <!-- Center: Wheel -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative;">
                 <div style="text-align: center; width: 100%;">
                     <span id="targetBadge" style="font-size: 10px; background: rgba(0,0,0,0.5); color: #a89f91; padding: 4px 12px; border-radius: 20px; border: 1px solid #3e3530; text-transform: uppercase; font-weight: 700;">Оберіть предмет праворуч</span>
                     <h2 id="targetName" class="tf-font" style="font-size: 34px; color: #fff; margin: 8px 0 0;">---</h2>
                 </div>
 
+                <!-- Wheel Box -->
                 <div class="wheel-box">
                     <canvas id="wheelCanvas" width="260" height="260" style="border-radius: 50%; box-shadow: 0 0 25px rgba(0,0,0,0.9);"></canvas>
                     <div id="arrowSpinner" class="arrow-spinner">
@@ -231,6 +241,7 @@
                 <button type="button" id="upgradeBtn" onclick="startUpgrade()" disabled class="tf-btn">ПОКРАЩИТИ</button>
             </div>
 
+            <!-- Right: Catalog -->
             <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
                 <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
                     <i class="fa-solid fa-bullseye"></i> Цілі для апгрейду
@@ -239,11 +250,13 @@
             </div>
         </div>
 
+        <!-- TAB 2: SHOP -->
         <div id="section-shop" class="hidden tf-panel">
             <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Магазин предметів TF2</h2>
             <div id="shopGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;"></div>
         </div>
 
+        <!-- TAB 3: INVENTORY -->
         <div id="section-inventory" class="hidden tf-panel">
             <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Ваша колекція</h2>
             <div id="fullInvGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;"></div>
@@ -326,7 +339,7 @@
                 div.className = `item-card ${item.qClass} ${isSel ? 'selected' : ''}`;
                 div.style.height = "110px";
                 div.onclick = (e) => {
-                    if(e.target.tagName === 'BUTTON') return;
+                    if(isSpinning || e.target.tagName === 'BUTTON') return;
                     if(isSel) selectedInv = selectedInv.filter(i => i !== index);
                     else selectedInv.push(index);
                     renderInv();
@@ -387,6 +400,7 @@
         }
 
         function sellItem(index) {
+            if(isSpinning) return;
             let item = inventory[index];
             if(!item) return;
             balance += item.price;
@@ -409,6 +423,7 @@
                 div.style.flexDirection = "row";
                 div.style.padding = "8px 12px";
                 div.onclick = () => {
+                    if(isSpinning) return;
                     targetItem = item;
                     document.getElementById('targetName').innerText = item.name;
                     document.getElementById('targetBadge').innerText = item.quality.toUpperCase();
@@ -444,6 +459,7 @@
             if(btn) btn.disabled = false;
         }
 
+        // ЖОВТИЙ СЕКТОР ШАНСУ (НЕ ЗНИКАЄ ПІД ЧАС ОБЕРТАННЯ)
         function drawWheel(chance) {
             document.getElementById('chanceText').innerText = `${chance.toFixed(2)}%`;
             const canvas = document.getElementById('wheelCanvas');
@@ -451,6 +467,7 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 260, 260);
 
+            // Тло круга
             ctx.beginPath();
             ctx.arc(130, 130, 120, 0, Math.PI * 2);
             ctx.fillStyle = '#171311';
@@ -459,6 +476,7 @@
             ctx.strokeStyle = '#3e3530';
             ctx.stroke();
 
+            // Жовтий сектор
             if(chance > 0) {
                 let winAngle = (chance / 100) * (Math.PI * 2);
                 ctx.beginPath();
@@ -477,19 +495,15 @@
             selectedInv.forEach(idx => { if(inventory[idx]) total += inventory[idx].price; });
 
             if(direct > balance) { showToast('Недостатньо ТК на балансі!', 'error'); return; }
-            if(direct > 0) { balance -= direct; document.getElementById('directRef').value = 0; }
 
-            inventory = inventory.filter((_, idx) => !selectedInv.includes(idx));
-            selectedInv = [];
-            updateUI(); 
-            renderInv();
-
+            // Блокуємо повторні кліки
             isSpinning = true;
             document.getElementById('upgradeBtn').disabled = true;
 
             let chance = Math.min((total / targetItem.price) * 100, 95);
             let win = Math.random() * 100 < chance;
 
+            // Кут зупинки стрілки
             let winRad = (chance / 100) * (Math.PI * 2);
             let targetRad = win ? (Math.random() * winRad) : (winRad + Math.random() * (Math.PI * 2 - winRad));
             let totalRotation = Math.PI * 2 * 5 + targetRad;
@@ -510,13 +524,24 @@
                 if(progress < 1) {
                     requestAnimationFrame(animateArrow);
                 } else {
-                    isSpinning = false;
+                    // ТІЛЬКИ ПІСЛЯ ЗАКІНЧЕННЯ ОБЕРТАННЯ ЗПИСУЄМО І ВИДАЛЯЄМО СТАВКУ
+                    if(direct > 0) { 
+                        balance -= direct; 
+                        document.getElementById('directRef').value = 0; 
+                    }
+
+                    inventory = inventory.filter((_, idx) => !selectedInv.includes(idx));
+                    selectedInv = [];
+
                     if(win) { 
                         inventory.push(targetItem); 
                         showToast(`🎉 УСПІХ! Ви виграли: ${targetItem.name}!`, 'success'); 
                     } else { 
                         showToast('❌ ПРОГРАШ! Спробуйте ще раз.', 'error'); 
                     }
+
+                    isSpinning = false;
+                    updateUI(); 
                     renderInv();
                 }
             }
