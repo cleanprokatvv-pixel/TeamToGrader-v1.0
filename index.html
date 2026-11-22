@@ -1,564 +1,244 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeamToGrader — TF2 Upgrader</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; }
-        body { 
-            background: #1b1715; 
-            color: #f3f4f6; 
-            font-family: 'Montserrat', sans-serif; 
-            user-select: none; 
-            margin: 0; 
-            padding-bottom: 40px; 
-        }
-        
-        .tf-font { font-family: 'Teko', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
-        
-        .tf-panel { 
-            background: #2b2522; 
-            border: 2px solid #3e3530; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 6px 20px rgba(0,0,0,0.7); 
-            border-radius: 12px; 
-            padding: 16px; 
-        }
-        
-        .tf-btn { 
-            background: linear-gradient(180deg, #e7b53b 0%, #b88314 100%); 
-            color: #171311; 
-            font-weight: 900; 
-            border: 2px solid #f9d877;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-family: 'Teko', sans-serif;
-            font-size: 22px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
-            transition: all 0.15s ease;
-            width: 100%;
-            cursor: pointer;
-        }
-        .tf-btn:hover:not(:disabled) { 
-            background: linear-gradient(180deg, #ffd466 0%, #d4971c 100%); 
-            transform: translateY(-1px); 
-        }
-        .tf-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #555; }
-
-        .item-card { 
-            background: #1e1917; 
-            border: 2px solid #3c332d; 
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-        .item-card:hover { border-color: #e7b53b; transform: translateY(-2px); }
-        .item-card.selected { 
-            border-color: #e7b53b !important; 
-            background: #342a22; 
-            box-shadow: 0 0 12px rgba(231, 181, 59, 0.4); 
-        }
-
-        .q-unique { color: #ffd700; border-color: #ffd700; }
-        .q-strange { color: #cf6a32; border-color: #cf6a32; }
-        .q-vintage { color: #476291; border-color: #476291; }
-        .q-australium { color: #f3ba2f; border-color: #f3ba2f; }
-        .q-unusual { color: #8650ac; border-color: #8650ac; }
-
-        .tab-btn { 
-            background: #231d1a; 
-            border: 1px solid #3e3530; 
-            color: #a89f91; 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            font-weight: 700; 
-            font-size: 13px; 
-            text-transform: uppercase; 
-            cursor: pointer;
-        }
-        .tab-btn.active { background: #e7b53b; color: #171311; border-color: #f9d877; font-weight: 800; }
-
-        /* Wheel Container */
-        .wheel-box {
-            position: relative;
-            width: 260px;
-            height: 260px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Rotating Arrow Overlay */
-        .arrow-spinner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 260px;
-            pointer-events: none;
-            z-index: 10;
-            transform-origin: center center;
-        }
-        .arrow-pointer {
-            position: absolute;
-            top: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 14px solid transparent;
-            border-right: 14px solid transparent;
-            border-top: 24px solid #e7b53b;
-            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.8));
-        }
-
-        #notification-box {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-        .tf-toast {
-            pointer-events: auto;
-            min-width: 260px;
-            background: #2b2522;
-            border: 2px solid #e7b53b;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-            border-radius: 10px;
-            padding: 12px 18px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease forwards;
-        }
-        .tf-toast.success { border-color: #2ecc71; }
-        .tf-toast.error { border-color: #e74c3c; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(120%); opacity: 0; }
-        }
-
-        .hidden { display: none !important; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #3e3530; border-radius: 3px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team2Grader — апгрейдер і магазин</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--steel:#d6d2c8;--rust:#c0622c;--rust2:#7a3a1c;--dark:#1a1c1e;--win:#9ccc65;
+  --rivets:radial-gradient(circle,#b5b9bb 0 2px,#222 3px,transparent 4px) left 6px top 6px/12px 12px no-repeat,
+  radial-gradient(circle,#b5b9bb 0 2px,#222 3px,transparent 4px) right 6px top 6px/12px 12px no-repeat,
+  radial-gradient(circle,#b5b9bb 0 2px,#222 3px,transparent 4px) left 6px bottom 6px/12px 12px no-repeat,
+  radial-gradient(circle,#b5b9bb 0 2px,#222 3px,transparent 4px) right 6px bottom 6px/12px 12px no-repeat}
+*{box-sizing:border-box}
+body{margin:0;color:var(--steel);font-family:'Oswald',Impact,sans-serif;font-size:16px;line-height:1.35;background:
+  radial-gradient(ellipse at 0 100%,rgba(160,75,30,.35),transparent 55%),radial-gradient(ellipse at 100% 0,rgba(140,60,20,.25),transparent 45%),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 1px,transparent 1px 4px),#2a2d2f}
+h1,h2,h3{font-family:'Alfa Slab One',Impact,serif;font-weight:400;margin:0}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--rust);outline-offset:2px}
+[hidden]{display:none!important}
+.top{position:relative;display:flex;align-items:center;gap:26px;padding:10px 20px 16px;flex-wrap:wrap;background:linear-gradient(#5d6366,#33373a);border-bottom:3px solid #000}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--rust) 0 14px,#111 14px 28px)}
+.logo{font-family:'Alfa Slab One',serif;font-size:26px;color:#eee;text-shadow:2px 2px 0 #000}.logo b{color:var(--rust);font-weight:400}
+.stat{font-size:14px}.stat b{display:block;font-size:19px;color:#fff}
+.top nav{margin:0 auto;display:flex;gap:10px}
+.tabbtn{cursor:pointer;font-weight:600;font-size:18px;padding:6px 20px;color:var(--steel);background:linear-gradient(#4a4f52,#2d3033);border:3px solid #000}
+.tabbtn[aria-pressed=true]{background:linear-gradient(#d07434,#8a421d);color:#fff;text-shadow:1px 1px 0 #000}
+.mbtn{cursor:pointer;font-weight:600;color:#fff;background:linear-gradient(#cf7436,#8a421d);border:3px solid #000;padding:6px 16px;box-shadow:4px 4px 0 #000;text-shadow:1px 1px 0 #000}
+.mbtn:hover:not(:disabled){transform:translate(2px,2px);box-shadow:2px 2px 0 #000}
+.mbtn:disabled{background:#5b5f61;color:#999;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:190px 1fr;min-height:calc(100vh - 70px)}
+aside{background:linear-gradient(#25282a,#1a1c1d);padding:10px;border-right:3px solid #000}
+aside h3{font-size:15px;margin:2px 0 4px;color:var(--rust)}aside p{margin:0 0 10px;font-size:13px;opacity:.6}
+.drop{border-left:8px solid var(--q);background:linear-gradient(#3b4043,#2b2e30);padding:8px 10px;margin-bottom:8px;min-height:60px;display:flex;flex-direction:column;justify-content:flex-end}
+.drop b{font-size:14px;line-height:1.1}.drop small{opacity:.65}
+main{max-width:1100px;width:100%;margin:0 auto;padding:22px 20px 50px}
+.hero-title{text-align:center;font-size:30px;margin-bottom:18px;text-shadow:3px 3px 0 #000}
+.hero-title span{color:var(--rust)}
+.arena{display:grid;grid-template-columns:1fr 320px 1fr;gap:16px;align-items:stretch}
+.box,.pnl{background:var(--rivets),radial-gradient(circle at 100% 100%,rgba(150,70,25,.45),transparent 50%),linear-gradient(145deg,#51565a,#2e3235);border:3px solid #000;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08),6px 6px 0 rgba(0,0,0,.5)}
+.box{padding:22px 16px;min-height:310px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.box h3{font-size:16px;margin-bottom:4px}.box>small{opacity:.7}
+.ph{margin:auto;opacity:.3;font-family:'Alfa Slab One',serif;font-size:90px;line-height:1}
+.sel{width:100%;margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:190px;overflow:auto;text-align:left}
+.sel div{background:#2c3033;border-left:6px solid var(--q);padding:4px 8px;font-size:15px}
+.big{margin:auto 0;width:100%;background:#2c3033;border-left:10px solid var(--q);padding:20px 12px;font-size:22px;font-weight:600}
+.big small{display:block;font-size:15px;opacity:.7;font-weight:400}
+.total{margin-top:10px;font-size:18px;color:var(--rust);font-weight:600}
+.wheelbox{display:flex;flex-direction:column;align-items:center}
+.wheel{position:relative;width:300px;height:300px}
+.wheel svg,.needle{position:absolute;inset:0;width:100%;height:100%}
+.needle{transition:transform 4.2s cubic-bezier(.12,.6,.1,1)}
+.needle::before{content:"";position:absolute;left:50%;top:2px;margin-left:-8px;border:8px solid transparent;border-top:0;border-bottom:22px solid #fff}
+.pct{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-size:15px}
+.pct b{font-family:'Alfa Slab One',serif;font-size:46px;font-weight:400;color:var(--rust);line-height:1}
+.go{margin-top:14px;width:100%;max-width:290px;font-size:24px;padding:10px}
+.msg{min-height:28px;margin:12px 0 0;font-weight:600;font-size:18px;text-align:center}
+.msg.win{color:var(--win)}.msg.lose{color:#ef7a5a}
+.lower,.shopgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.head{display:flex;gap:8px;align-items:center;padding:12px 18px;background:linear-gradient(#1f2123,#141617);flex-wrap:wrap}
+.head h3{font-size:17px;margin-right:auto}
+.head input{width:80px;background:#2c3033;color:var(--steel);border:2px solid #000;padding:5px 8px}
+.head input.name{width:110px}.stake input{width:70px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;padding:14px 18px;max-height:420px;overflow:auto}
+.item{text-align:left;color:var(--steel);background:linear-gradient(160deg,#454a4d,#2c3033);border:3px solid transparent;border-left:8px solid var(--q);padding:7px 8px;min-height:84px;display:flex;flex-direction:column;justify-content:space-between;gap:4px}
+button.item{cursor:pointer}
+.item span{font-size:14px;color:#e8a56d;font-weight:600}.item b{font-weight:600;line-height:1.1;font-size:15px}.item small{opacity:.65;font-size:12px}
+.item[aria-pressed=true]{border-color:var(--rust);background:linear-gradient(160deg,#6b4a38,#3b2a21)}
+.item .mbtn{font-size:14px;padding:3px 8px;box-shadow:3px 3px 0 #000}
+.empty{padding:6px 0;opacity:.6;margin:0}
+.log{list-style:none;margin:0;padding:0 18px 16px;font-size:14px;opacity:.85}.log li{padding:3px 0;border-top:1px dashed rgba(214,210,200,.2)}
+footer{text-align:center;padding:18px;background:linear-gradient(#2a2d2f,#171819);border-top:4px solid var(--rust);font-size:14px}
+.ava{width:36px;height:36px;border:2px solid #000;vertical-align:middle;margin-right:6px;background:#2c3033}
+dialog{padding:0;width:92%;max-width:560px;color:var(--steel);background:#2e3235;border:3px solid #000;box-shadow:8px 8px 0 #000}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+.hl{list-style:none;margin:0;padding:12px 18px;max-height:60vh;overflow:auto;font-size:15px}
+.hl li{padding:5px 0;border-top:1px dashed rgba(214,210,200,.2)}.hl li.ok{color:var(--win)}.hl li.bad{color:#ef7a5a}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}aside{display:none}.arena,.lower,.shopgrid{grid-template-columns:1fr}.wheelbox{order:-1}}
+@media (prefers-reduced-motion:reduce){.needle,.mbtn{transition:none}}
+</style>
 </head>
 <body>
+<header class="top">
+  <span class="logo">Team<b>2</b>Grader</span>
+  <div class="stat">Апгрейдів<b id="cnt">0</b></div>
+  <div class="stat">Баланс<b><span id="bal">0</span> мет.</b></div>
+  <nav><button class="tabbtn" data-v="up" aria-pressed="true">Апгрейд</button><button class="tabbtn" data-v="shop" aria-pressed="false">Магазин</button></nav>
+  <button class="mbtn" id="bonus">Бонус +5 мет.</button>
+  <span id="auth" class="stat"></span>
+</header>
+<div class="layout">
+<aside><h3>Останні дропи</h3><p>Демо-стрічка</p><div id="drops"></div></aside>
+<main>
+<div id="v-up">
+  <h1 class="hero-title">Покращуй предмети до <span>крутіших</span></h1>
+  <div class="arena">
+    <section class="box"><h3>Твої предмети</h3><small>Можна обрати кілька або додати баланс</small><div id="left" style="width:100%;display:flex;flex-direction:column;flex:1"></div></section>
+    <section class="wheelbox">
+      <div class="wheel">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs><linearGradient id="g" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7a3a1c"/><stop offset="1" stop-color="#e08a4a"/></linearGradient></defs>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#3a3e41" stroke-width="20"/>
+          <circle id="arc" cx="100" cy="100" r="80" fill="none" stroke="url(#g)" stroke-width="20" stroke-dasharray="0 503" transform="rotate(-90 100 100)"/>
+          <circle cx="100" cy="100" r="66" fill="#1f2123" stroke="#000" stroke-width="3"/>
+          <circle cx="100" cy="100" r="91" fill="none" stroke="#000" stroke-width="3"/>
+        </svg>
+        <div class="needle" id="needle" aria-hidden="true"></div>
+        <div class="pct"><b id="chance">0%</b>шанс</div>
+      </div>
+      <button class="mbtn go" id="go" disabled>Апгрейд</button>
+      <p class="msg" id="msg" aria-live="polite">Обери предмет і ціль.</p>
+    </section>
+    <section class="box"><h3>Ціль апгрейду</h3><small>Обери предмет справа внизу</small><div id="right" style="width:100%;display:flex;flex:1"></div></section>
+  </div>
+  <div class="lower">
+    <section class="pnl">
+      <div class="head"><h3>Мій інвентар</h3>
+        <label class="stake">Баланс у ставку <input type="number" id="stake" min="0" value="0"></label>
+        <button class="mbtn" id="sellsel">Продати вибране</button></div>
+      <div class="items" id="inv"></div><ul class="log" id="log"></ul>
+    </section>
+    <section class="pnl">
+      <div class="head"><h3>Апгрейд на</h3><input class="name" id="q" placeholder="Назва"><input id="from" type="number" min="0" placeholder="від"><input id="to" type="number" min="0" placeholder="до"></div>
+      <div class="items" id="cat"></div>
+    </section>
+  </div>
+</div>
 
-    <!-- NAVBAR -->
-    <header style="background: #231d1a; border-bottom: 3px solid #e7b53b; padding: 12px 24px; position: sticky; top: 0; z-index: 100;">
-        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #e7b53b, #b88314); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #171311; font-size: 24px; font-weight: 900; border: 2px solid #f9d877;">
-                    <i class="fa-solid fa-crosshairs"></i>
-                </div>
-                <div>
-                    <h1 class="tf-font" style="font-size: 32px; color: #e7b53b; margin: 0; line-height: 0.9;">TeamToGrader</h1>
-                    <p style="font-size: 10px; color: #a89f91; margin: 2px 0 0; font-weight: 800; letter-spacing: 1.5px;">TF2 MANN CO. UPGRADER</p>
-                </div>
-            </div>
+<div id="v-shop" hidden>
+  <h1 class="hero-title">Магазин <span>запчастин</span></h1>
+  <p class="msg" id="shopmsg" aria-live="polite">Купуй предмети за метал або продавай виграні.</p>
+  <div class="shopgrid">
+    <section class="pnl"><div class="head"><h3>Купити</h3><span>Ціна покупки = вартість +30%</span></div><div class="items" id="buy"></div></section>
+    <section class="pnl"><div class="head"><h3>Продати</h3><span>Ціна продажу = вартість −30%</span></div><div class="items" id="sell"></div></section>
+  </div>
+</div>
+</main>
+</div>
+<footer>Team2Grader — фан-проєкт за мотивами Team Fortress 2. Усі предмети й «мет.» віртуальні, реальних грошей тут немає.</footer>
 
-            <!-- TABS -->
-            <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 10px; border: 1px solid #3e3530;">
-                <button type="button" onclick="switchTab('upgrader')" id="tab-btn-upgrader" class="tab-btn active">⚡ Апгрейд</button>
-                <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn">🛒 Магазин</button>
-                <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn">🎒 Інвентар</button>
-            </div>
+<dialog id="hist"><div class="head"><h3 id="htitle"></h3><button class="mbtn" onclick="this.closest('dialog').close()">Закрити</button></div><ul class="hl" id="hlist"></ul></dialog>
 
-            <!-- BALANCE -->
-            <div style="background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 10px; border: 1px solid #3e3530; display: flex; align-items: center; gap: 12px;">
-                <div>
-                    <span style="font-size: 9px; color: #a89f91; display: block; font-weight: 700;">БАЛАНС</span>
-                    <span id="balCoins" class="tf-font" style="font-size: 26px; color: #e7b53b; line-height: 1;">100 ТК</span>
-                </div>
-                <button type="button" onclick="addFreeCoins()" style="background: #3e3530; border: none; border-radius: 6px; color: #e74c3c; width: 30px; height: 30px; font-weight: bold; cursor: pointer;" title="Поповнити по 100 ТК">+</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- MAIN CONTAINER -->
-    <main style="max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px;">
-
-        <!-- TAB 1: UPGRADER -->
-        <div id="section-upgrader" style="display: grid; grid-template-columns: 280px 1fr 280px; gap: 20px; align-items: start;">
-            
-            <!-- Left: Inventory -->
-            <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
-                <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
-                    <i class="fa-solid fa-boxes-stacked"></i> Ваш інвентар
-                </h3>
-                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; border: 1px solid #3e3530;">
-                    <span style="font-size: 11px; color: #a89f91; font-weight: 700;">Ставка монетами:</span>
-                    <input id="directRef" type="number" min="0" value="0" oninput="calcOdds()" style="width: 80px; background: #171311; border: 1px solid #3e3530; text-align: right; padding: 4px 8px; border-radius: 6px; color: #e7b53b; font-weight: 700;">
-                </div>
-                <div id="invGrid" style="flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; align-content: start; padding-right: 4px;"></div>
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #3e3530; text-align: center; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px;">
-                    <span style="font-size: 10px; color: #a89f91; font-weight: 700; display: block;">СУМА СТАВКИ</span>
-                    <div id="totalBet" class="tf-font" style="font-size: 28px; color: #e7b53b;">0 ТК</div>
-                </div>
-            </div>
-
-            <!-- Center: Wheel -->
-            <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative;">
-                <div style="text-align: center; width: 100%;">
-                    <span id="targetBadge" style="font-size: 10px; background: rgba(0,0,0,0.5); color: #a89f91; padding: 4px 12px; border-radius: 20px; border: 1px solid #3e3530; text-transform: uppercase; font-weight: 700;">Оберіть предмет праворуч</span>
-                    <h2 id="targetName" class="tf-font" style="font-size: 34px; color: #fff; margin: 8px 0 0;">---</h2>
-                </div>
-
-                <!-- Wheel Box -->
-                <div class="wheel-box">
-                    <canvas id="wheelCanvas" width="260" height="260" style="border-radius: 50%; box-shadow: 0 0 25px rgba(0,0,0,0.9);"></canvas>
-                    <div id="arrowSpinner" class="arrow-spinner">
-                        <div class="arrow-pointer"></div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(0,0,0,0.6); padding: 6px 24px; border-radius: 20px; border: 1px solid #3e3530; text-align: center;">
-                    <span style="font-size: 10px; color: #a89f91; text-transform: uppercase; font-weight: 700; display: block;">Шанс успіху</span>
-                    <span id="chanceText" class="tf-font" style="font-size: 42px; color: #e7b53b; line-height: 1;">0.00%</span>
-                </div>
-
-                <button type="button" id="upgradeBtn" onclick="startUpgrade()" disabled class="tf-btn">ПОКРАЩИТИ</button>
-            </div>
-
-            <!-- Right: Catalog -->
-            <div class="tf-panel" style="height: 580px; display: flex; flex-direction: column;">
-                <h3 style="font-size: 13px; color: #a89f91; text-transform: uppercase; margin: 0 0 10px; border-bottom: 1px solid #3e3530; padding-bottom: 8px;">
-                    <i class="fa-solid fa-bullseye"></i> Цілі для апгрейду
-                </h3>
-                <div id="catalogGrid" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
-            </div>
-        </div>
-
-        <!-- TAB 2: SHOP -->
-        <div id="section-shop" class="hidden tf-panel">
-            <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Магазин предметів TF2</h2>
-            <div id="shopGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;"></div>
-        </div>
-
-        <!-- TAB 3: INVENTORY -->
-        <div id="section-inventory" class="hidden tf-panel">
-            <h2 class="tf-font" style="font-size: 32px; color: #e7b53b; margin-top: 0;">Ваша колекція</h2>
-            <div id="fullInvGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;"></div>
-        </div>
-
-    </main>
-
-    <div id="notification-box"></div>
-
-    <script>
-        let balance = parseFloat(localStorage.getItem('tf_coins')) || 100.0;
-        let selectedInv = [];
-        let targetItem = null;
-        let isSpinning = false;
-
-        const itemsDB = [
-            { id: '1', name: 'Mercenary Badge', price: 5, quality: 'unique', qClass: 'q-unique', icon: 'fa-shield-halved' },
-            { id: '2', name: 'Scout Bat', price: 8, quality: 'unique', qClass: 'q-unique', icon: 'fa-baseball-bat-ball' },
-            { id: '3', name: 'Gibus Hat', price: 12, quality: 'unique', qClass: 'q-unique', icon: 'fa-hat-wizard' },
-            { id: '4', name: 'Mann Co. Cap', price: 15, quality: 'unique', qClass: 'q-unique', icon: 'fa-graduation-cap' },
-            { id: '5', name: 'Standard Syringe Gun', price: 20, quality: 'unique', qClass: 'q-unique', icon: 'fa-syringe' },
-            { id: '6', name: 'Strange Shotgun', price: 40, quality: 'strange', qClass: 'q-strange', icon: 'fa-gun' },
-            { id: '7', name: 'Vintage Quick-Fix', price: 65, quality: 'vintage', qClass: 'q-vintage', icon: 'fa-kit-medical' },
-            { id: '8', name: 'Australium Wrench', price: 140, quality: 'australium', qClass: 'q-australium', icon: 'fa-wrench' },
-            { id: '9', name: 'Australium Rocket Launcher', price: 550, quality: 'australium', qClass: 'q-australium', icon: 'fa-rocket' },
-            { id: '10', name: 'Unusual Team Captain', price: 1200, quality: 'unusual', qClass: 'q-unusual', icon: 'fa-crown' },
-            { id: '11', name: 'Golden Frying Pan', price: 5000, quality: 'australium', qClass: 'q-australium', icon: 'fa-utensils' }
-        ];
-
-        let inventory = JSON.parse(localStorage.getItem('tf_inv')) || [itemsDB[0], itemsDB[1], itemsDB[2]];
-
-        function showToast(message, type = 'info') {
-            const box = document.getElementById('notification-box');
-            const toast = document.createElement('div');
-            toast.className = `tf-toast ${type}`;
-            
-            let icon = 'fa-info-circle';
-            if(type === 'success') icon = 'fa-circle-check';
-            if(type === 'error') icon = 'fa-triangle-exclamation';
-
-            toast.innerHTML = `
-                <i class="fa-solid ${icon}" style="font-size:20px; color:${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#e7b53b'};"></i>
-                <div style="font-size:12px; font-weight:700;">${message}</div>
-            `;
-            box.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s ease forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function switchTab(tab) {
-            ['upgrader', 'shop', 'inventory'].forEach(t => {
-                let sec = document.getElementById(`section-${t}`);
-                if(sec) sec.classList.add('hidden');
-                let btn = document.getElementById(`tab-btn-${t}`);
-                if(btn) btn.classList.remove('active');
-            });
-            document.getElementById(`section-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-btn-${tab}`).classList.add('active');
-
-            if(tab === 'inventory') renderFullInv();
-            if(tab === 'shop') renderShop();
-        }
-
-        function addFreeCoins() {
-            balance += 100;
-            updateUI();
-            showToast('Нараховано +100 ТК!', 'success');
-        }
-
-        function renderInv() {
-            const grid = document.getElementById('invGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            inventory.forEach((item, index) => {
-                const isSel = selectedInv.includes(index);
-                const div = document.createElement('div');
-                div.className = `item-card ${item.qClass} ${isSel ? 'selected' : ''}`;
-                div.style.height = "110px";
-                div.onclick = (e) => {
-                    if(isSpinning || e.target.tagName === 'BUTTON') return;
-                    if(isSel) selectedInv = selectedInv.filter(i => i !== index);
-                    else selectedInv.push(index);
-                    renderInv();
-                };
-                div.innerHTML = `
-                    <div style="font-size: 26px;"><i class="fa-solid ${item.icon}"></i></div>
-                    <div style="font-size: 10px; font-weight: 700; color: #fff; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.name}</div>
-                    <div style="font-size: 10px; font-weight: 800;">${item.price} ТК</div>
-                    <button type="button" onclick="sellItem(${index})" style="background:#5a1a1a; border:1px solid #852626; border-radius:4px; font-size:9px; font-weight:700; color:#ff9999; padding:2px 6px; width:100%; cursor:pointer;">Продати</button>
-                `;
-                grid.appendChild(div);
-            });
-            calcOdds();
-        }
-
-        function renderFullInv() {
-            const grid = document.getElementById('fullInvGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            inventory.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = `tf-panel item-card ${item.qClass}`;
-                div.innerHTML = `
-                    <div style="font-size: 34px; margin-bottom: 6px;"><i class="fa-solid ${item.icon}"></i></div>
-                    <div style="font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 2px;">${item.name}</div>
-                    <div style="font-size: 11px; font-weight: 800; margin-bottom: 10px;">${item.price} ТК</div>
-                    <button type="button" onclick="sellItem(${index})" style="background:#5a1a1a; border:1px solid #852626; color:#ff9999; padding:6px; border-radius:6px; font-size:10px; font-weight:700; width:100%; cursor:pointer;">Продати</button>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function renderShop() {
-            const grid = document.getElementById('shopGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            itemsDB.forEach(item => {
-                const div = document.createElement('div');
-                div.className = `tf-panel item-card ${item.qClass}`;
-                div.innerHTML = `
-                    <div style="font-size: 34px; margin-bottom: 8px;"><i class="fa-solid ${item.icon}"></i></div>
-                    <div style="font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px;">${item.name}</div>
-                    <div style="font-size: 11px; font-weight: 800; margin-bottom: 12px;">${item.price} ТК</div>
-                    <button type="button" onclick="buyItem('${item.id}')" class="tf-btn" style="padding: 6px; font-size: 16px;">Купити</button>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function buyItem(id) {
-            let item = itemsDB.find(i => i.id === id);
-            if(!item || balance < item.price) { showToast('Недостатньо ТК на балансі!', 'error'); return; }
-            balance -= item.price;
-            inventory.push(item);
-            updateUI();
-            renderInv();
-            showToast(`Придбано: ${item.name}!`, 'success');
-        }
-
-        function sellItem(index) {
-            if(isSpinning) return;
-            let item = inventory[index];
-            if(!item) return;
-            balance += item.price;
-            inventory.splice(index, 1);
-            selectedInv = selectedInv.filter(i => i !== index).map(i => i > index ? i - 1 : i);
-            updateUI();
-            renderInv();
-            if(!document.getElementById('section-inventory').classList.contains('hidden')) renderFullInv();
-            showToast(`Продано ${item.name} за +${item.price} ТК!`, 'info');
-        }
-
-        function renderCatalog() {
-            const grid = document.getElementById('catalogGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            itemsDB.forEach(item => {
-                const isSel = targetItem && targetItem.id === item.id;
-                const div = document.createElement('div');
-                div.className = `item-card ${item.qClass} ${isSel ? 'selected' : ''}`;
-                div.style.flexDirection = "row";
-                div.style.padding = "8px 12px";
-                div.onclick = () => {
-                    if(isSpinning) return;
-                    targetItem = item;
-                    document.getElementById('targetName').innerText = item.name;
-                    document.getElementById('targetBadge').innerText = item.quality.toUpperCase();
-                    renderCatalog();
-                    calcOdds();
-                };
-                div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <div style="font-size: 20px;"><i class="fa-solid ${item.icon}"></i></div>
-                        <span style="font-size: 11px; font-weight: 700; color: #fff;">${item.name}</span>
-                    </div>
-                    <span style="font-size: 11px; font-weight: 800;">${item.price} ТК</span>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function calcOdds() {
-            if(isSpinning) return;
-            let direct = parseFloat(document.getElementById('directRef').value) || 0;
-            let total = direct;
-            selectedInv.forEach(idx => { if(inventory[idx]) total += inventory[idx].price; });
-            document.getElementById('totalBet').innerText = `${total.toFixed(0)} ТК`;
-
-            let btn = document.getElementById('upgradeBtn');
-            if(!targetItem || total <= 0 || total >= targetItem.price) {
-                drawWheel(0);
-                if(btn) btn.disabled = true;
-                return;
-            }
-            let chance = Math.min((total / targetItem.price) * 100, 95);
-            drawWheel(chance);
-            if(btn) btn.disabled = false;
-        }
-
-        // ЖОВТИЙ СЕКТОР ШАНСУ (НЕ ЗНИКАЄ ПІД ЧАС ОБЕРТАННЯ)
-        function drawWheel(chance) {
-            document.getElementById('chanceText').innerText = `${chance.toFixed(2)}%`;
-            const canvas = document.getElementById('wheelCanvas');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, 260, 260);
-
-            // Тло круга
-            ctx.beginPath();
-            ctx.arc(130, 130, 120, 0, Math.PI * 2);
-            ctx.fillStyle = '#171311';
-            ctx.fill();
-            ctx.lineWidth = 4;
-            ctx.strokeStyle = '#3e3530';
-            ctx.stroke();
-
-            // Жовтий сектор
-            if(chance > 0) {
-                let winAngle = (chance / 100) * (Math.PI * 2);
-                ctx.beginPath();
-                ctx.moveTo(130, 130);
-                ctx.arc(130, 130, 118, -Math.PI / 2, -Math.PI / 2 + winAngle);
-                ctx.lineTo(130, 130);
-                ctx.fillStyle = '#e7b53b';
-                ctx.fill();
-            }
-        }
-
-        function startUpgrade() {
-            if(isSpinning || !targetItem) return;
-            let direct = parseFloat(document.getElementById('directRef').value) || 0;
-            let total = direct;
-            selectedInv.forEach(idx => { if(inventory[idx]) total += inventory[idx].price; });
-
-            if(direct > balance) { showToast('Недостатньо ТК на балансі!', 'error'); return; }
-
-            // Блокуємо повторні кліки
-            isSpinning = true;
-            document.getElementById('upgradeBtn').disabled = true;
-
-            let chance = Math.min((total / targetItem.price) * 100, 95);
-            let win = Math.random() * 100 < chance;
-
-            // Кут зупинки стрілки
-            let winRad = (chance / 100) * (Math.PI * 2);
-            let targetRad = win ? (Math.random() * winRad) : (winRad + Math.random() * (Math.PI * 2 - winRad));
-            let totalRotation = Math.PI * 2 * 5 + targetRad;
-
-            let start = null;
-            let duration = 3800;
-            const spinnerElem = document.getElementById('arrowSpinner');
-
-            function animateArrow(timestamp) {
-                if(!start) start = timestamp;
-                let progress = Math.min((timestamp - start) / duration, 1);
-                
-                let ease = 1 - Math.pow(1 - progress, 3);
-                let currentRad = totalRotation * ease;
-                let currentDeg = (currentRad * 180) / Math.PI;
-                spinnerElem.style.transform = `rotate(${currentDeg}deg)`;
-
-                if(progress < 1) {
-                    requestAnimationFrame(animateArrow);
-                } else {
-                    // ТІЛЬКИ ПІСЛЯ ЗАКІНЧЕННЯ ОБЕРТАННЯ ЗПИСУЄМО І ВИДАЛЯЄМО СТАВКУ
-                    if(direct > 0) { 
-                        balance -= direct; 
-                        document.getElementById('directRef').value = 0; 
-                    }
-
-                    inventory = inventory.filter((_, idx) => !selectedInv.includes(idx));
-                    selectedInv = [];
-
-                    if(win) { 
-                        inventory.push(targetItem); 
-                        showToast(`🎉 УСПІХ! Ви виграли: ${targetItem.name}!`, 'success'); 
-                    } else { 
-                        showToast('❌ ПРОГРАШ! Спробуйте ще раз.', 'error'); 
-                    }
-
-                    isSpinning = false;
-                    updateUI(); 
-                    renderInv();
-                }
-            }
-            requestAnimationFrame(animateArrow);
-        }
-
-        function updateUI() {
-            document.getElementById('balCoins').innerText = `${balance.toFixed(0)} ТК`;
-            localStorage.setItem('tf_coins', balance);
-            localStorage.setItem('tf_inv', JSON.stringify(inventory));
-        }
-
-        window.onload = function() {
-            updateUI();
-            renderInv();
-            renderCatalog();
-        };
-    </script>
+<script>
+const Q={normal:['Normal','#b2b2b2'],vintage:['Vintage','#6f8fc9'],strange:['Strange','#cf6a32'],unusual:['Unusual','#9d6bd0'],australium:['Australium','#e7b53b']};
+const ITEMS=[
+ {n:'Bonk! Atomic Punch',v:2,q:'normal'},{n:'Frying Pan',v:4,q:'normal'},{n:'Scattergun',v:6,q:'normal'},
+ {n:'Vintage Scattergun',v:12,q:'vintage'},{n:'Strange Bat',v:20,q:'strange'},{n:'Strange Rocket Launcher',v:30,q:'strange'},
+ {n:'Vintage Medi Gun',v:60,q:'vintage'},{n:'Strange Sniper Rifle',v:110,q:'strange'},{n:'Unusual Team Captain',v:250,q:'unusual'},
+ {n:'Australium Minigun',v:500,q:'australium'},{n:'Unusual Killer Exclusive',v:1200,q:'unusual'},{n:'Golden Frying Pan',v:2500,q:'australium'}
+];
+const buyP=i=>Math.ceil(ITEMS[i].v*1.3),sellP=i=>Math.max(1,Math.floor(ITEMS[i].v*.7));
+const $=id=>document.getElementById(id);
+let inv=[0,1,2,2,3],bal=20,count=0,log=[],sel=new Set(),target=null,busy=false,rot=0,drops=[];
+let user=null,KEY='t2g3';
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({inv,bal,count,log}))}catch(e){}};
+function loadState(){KEY=user?'t2g3_'+user.steamid:'t2g3';
+  try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.inv)){inv=s.inv;bal=s.bal;count=s.count;log=s.log||[]}}catch(e){}}
+const fmtLog=l=>typeof l==='string'?l:(l.ok?'Успіх: ':'Невдача: ')+l.from+' → '+l.to+' ('+l.c+'%)';
+function renderAuth(){
+  const a=$('auth');a.innerHTML='';
+  if(user){
+    const img=document.createElement('img');img.className='ava';img.alt='';
+    if(/^https:\/\//.test(user.avatar||''))img.src=user.avatar;
+    const nm=document.createElement('b');nm.textContent=user.name;
+    a.append(img,nm,' ');
+  }
+  const h=document.createElement('button');h.className='mbtn';h.textContent='Історія';h.onclick=openHist;a.appendChild(h);
+  const b=document.createElement('button');b.className='mbtn';
+  if(user){b.textContent='Вийти';b.onclick=()=>fetch('/auth/logout',{method:'POST'}).finally(()=>location.reload())}
+  else{b.textContent='Увійти через Steam';b.onclick=()=>{
+    if(!/^https?:$/.test(location.protocol)){alert('Вхід через Steam працює лише через запущений сервер (http://localhost:3000), а не з файлу.');return}
+    location.href='/auth/steam'}}
+  a.append(' ',b);
+}
+function openHist(){
+  const u=$('hlist');u.innerHTML='';
+  if(!log.length)u.innerHTML='<li>Поки порожньо.</li>';
+  log.forEach(l=>{const li=document.createElement('li');li.textContent=(l.t?new Date(l.t).toLocaleString('uk-UA')+' — ':'')+fmtLog(l);
+    if(l.ok===true)li.className='ok';else if(l.ok===false)li.className='bad';u.appendChild(li)});
+  $('htitle').textContent=user?'Історія апгрейдів: '+user.name:'Історія апгрейдів (гість)';
+  $('hist').showModal();
+}
+const cardEl=(it,pressed,fn)=>{const b=document.createElement('button');b.className='item';b.style.setProperty('--q',Q[it.q][1]);
+  b.setAttribute('aria-pressed',pressed);b.innerHTML='<span>'+it.v+' мет.</span><b>'+it.n+'</b><small>'+Q[it.q][0]+'</small>';b.onclick=fn;return b};
+const shopEl=(it,label,fn,off)=>{const d=document.createElement('div');d.className='item';d.style.setProperty('--q',Q[it.q][1]);
+  d.innerHTML='<b>'+it.n+'</b><small>'+Q[it.q][0]+' · '+it.v+' мет.</small>';
+  const b=document.createElement('button');b.className='mbtn';b.textContent=label;b.disabled=!!off;b.onclick=fn;d.appendChild(b);return d};
+const stake=()=>Math.max(0,Math.min(bal,Math.floor(+$('stake').value||0)));
+const sum=()=>{let s=stake();sel.forEach(i=>s+=ITEMS[inv[i]].v);return s};
+const chance=()=>target===null?0:Math.min(90,Math.max(1,Math.floor(sum()/ITEMS[target].v*100)));
+function render(){
+  const s=sum();if(target!==null&&ITEMS[target].v<=s)target=null;
+  $('bal').textContent=bal;$('cnt').textContent=count;
+  $('inv').innerHTML='';
+  if(!inv.length)$('inv').innerHTML='<p class="empty">Порожньо. Купи в магазині або візьми бонус.</p>';
+  inv.forEach((id,i)=>$('inv').appendChild(cardEl(ITEMS[id],sel.has(i),()=>{if(busy)return;sel.has(i)?sel.delete(i):sel.add(i);render()})));
+  const from=+$('from').value||0,to=+$('to').value||Infinity,q=$('q').value.toLowerCase();
+  $('cat').innerHTML='';let any=false;
+  ITEMS.forEach((it,i)=>{if(s>0&&it.v>s&&it.v>=from&&it.v<=to&&it.n.toLowerCase().includes(q)){any=true;$('cat').appendChild(cardEl(it,target===i,()=>{if(busy)return;target=i;render()}))}});
+  if(!any)$('cat').innerHTML='<p class="empty">'+(s?'Нічого не знайдено.':'Спочатку обери свій предмет.')+'</p>';
+  $('left').innerHTML=s?'<div class="sel">'+[...sel].map(i=>'<div style="--q:'+Q[ITEMS[inv[i]].q][1]+'">'+ITEMS[inv[i]].n+' — '+ITEMS[inv[i]].v+'</div>').join('')+(stake()?'<div style="--q:#c0622c">Баланс — '+stake()+'</div>':'')+'</div><div class="total">Разом: '+s+' мет.</div>':'<div class="ph">?</div>';
+  $('right').innerHTML=target!==null?'<div class="big" style="--q:'+Q[ITEMS[target].q][1]+'">'+ITEMS[target].n+'<small>'+Q[ITEMS[target].q][0]+' · '+ITEMS[target].v+' мет.</small></div>':'<div class="ph">?</div>';
+  const c=chance();$('chance').textContent=c+'%';$('arc').setAttribute('stroke-dasharray',(c/100*502.65)+' 503');
+  $('go').disabled=busy||target===null||!s;
+  $('sellsel').disabled=busy||!sel.size;
+  $('log').innerHTML=log.slice(0,4).map(l=>'<li>'+fmtLog(l)+'</li>').join('');
+  $('buy').innerHTML='';ITEMS.forEach((it,i)=>$('buy').appendChild(shopEl(it,'Купити за '+buyP(i),()=>buy(i),busy||bal<buyP(i)||inv.length>=40)));
+  $('sell').innerHTML='';if(!inv.length)$('sell').innerHTML='<p class="empty">Нічого продавати.</p>';
+  inv.forEach((id,i)=>$('sell').appendChild(shopEl(ITEMS[id],'Продати за '+sellP(id),()=>sellOne(i),busy)));
+}
+function shopMsg(t){$('shopmsg').textContent=t}
+function buy(i){bal-=buyP(i);inv.push(i);sel=new Set();save();shopMsg('Куплено: '+ITEMS[i].n+' за '+buyP(i)+' мет.');render()}
+function sellOne(i){const id=inv[i];bal+=sellP(id);inv.splice(i,1);sel=new Set();target=null;save();shopMsg('Продано: '+ITEMS[id].n+' за '+sellP(id)+' мет.');render()}
+$('sellsel').onclick=()=>{if(busy||!sel.size)return;let t=0;sel.forEach(i=>t+=sellP(inv[i]));bal+=t;inv=inv.filter((_,i)=>!sel.has(i));sel=new Set();target=null;
+  $('msg').className='msg win';$('msg').textContent='Продано за '+t+' мет.';save();render()};
+document.querySelectorAll('.tabbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('v-up').hidden=b.dataset.v!=='up';$('v-shop').hidden=b.dataset.v!=='shop'});
+function renderDrops(){$('drops').innerHTML=drops.map(i=>'<div class="drop" style="--q:'+Q[ITEMS[i].q][1]+'"><b>'+ITEMS[i].n+'</b><small>'+ITEMS[i].v+' мет.</small></div>').join('')}
+const addDrop=i=>{drops.unshift(i);drops=drops.slice(0,8);renderDrops()};
+for(let k=0;k<8;k++)drops.push(Math.floor(Math.random()*ITEMS.length*.7));renderDrops();
+setInterval(()=>addDrop(Math.floor(Math.random()*Math.random()*ITEMS.length)),5000);
+$('bonus').onclick=()=>{if(busy)return;bal+=5;save();render()};
+['stake','from','to','q'].forEach(id=>$(id).addEventListener('input',()=>{if(!busy)render()}));
+$('go').onclick=()=>{
+  const c=chance(),win=Math.random()*100<c,span=c*3.6;
+  const deg=win?2+Math.random()*Math.max(span-4,.5):span+2+Math.random()*(360-span-4);
+  rot+=360*5+((deg-rot%360)+360)%360;busy=true;render();$('msg').className='msg';$('msg').textContent='Крутимо…';
+  $('needle').style.transform='rotate('+rot+'deg)';
+  setTimeout(()=>{
+    const t=ITEMS[target],lost=[...sel].map(i=>ITEMS[inv[i]].n).concat(stake()?[stake()+' мет.']:[]).join(', ');
+    bal-=stake();inv=inv.filter((_,i)=>!sel.has(i));sel=new Set();$('stake').value=0;count++;
+    if(win){inv.push(target);addDrop(target);$('msg').className='msg win';$('msg').textContent='Успіх! Ти отримав '+t.n+'. Його можна продати в магазині.';log.unshift({t:Date.now(),ok:true,from:lost,to:t.n,c})}
+    else{$('msg').className='msg lose';$('msg').textContent='Невдача. Ставку втрачено.';log.unshift({t:Date.now(),ok:false,from:lost,to:t.n,c})}
+    log=log.slice(0,100);target=null;busy=false;save();render();
+  },4400);
+};
+fetch('/api/me').then(r=>r.ok?r.json():{}).then(d=>{user=d.user||null}).catch(()=>{}).finally(()=>{loadState();renderAuth();render()});
+renderAuth();render();
+</script>
 </body>
 </html>
